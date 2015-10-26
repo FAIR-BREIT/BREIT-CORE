@@ -72,13 +72,13 @@ Third party libraries:
 
 #### 2. Install [BREIT](https://github.com/NicolasWinckler/BREIT)
 
-    # "Bear_path_install" is used here as a directory name, but can be renamed as you want.
+    # "Breit_path_install" is used here as a directory name, but can be renamed as you want.
     # Set the shell variable SIMPATH to the boost installation directory
     export SIMPATH=~/boost_install
     [setenv SIMPATH ~/boost_install]
 
-    cd ~/Bear_path_install
-    git clone https://github.com/NicolasWinckler/BREIT
+    cd ~/Breit_path_install
+    git clone https://github.com/FAIR-BREIT/BREIT-CORE.git
     cd BREIT
     mkdir build
     cd build
