@@ -70,6 +70,8 @@ Third party libraries:
     * on linux use e.g. sudo apt-get install liblapack-dev
 * Root 5.3x or Root >= 6.04(required for non-equilibrium solutions)
 
+For the Boost and Root libraries you can install this [FAIRSOFT version](https://github.com/FairRootGroup/FairSoft/tree/RC_jul15).
+
 #### 2. Install [BREIT](https://github.com/NicolasWinckler/BREIT)
 
     # "Breit_path_install" is used here as a directory name, but can be renamed as you want.
