@@ -16,7 +16,7 @@ Output equilibrium results are provided on demand in the form of :
 
 * 1-electron approximation (txt file)
 * no-approximation obtained from matrrix inversion (txt file)
-* TODO : figures (pdf or root files)
+* figures (pdf or root files)
 
 Output non-equilibrium results are provided on demand in the form of :
 
@@ -35,8 +35,9 @@ Output non-equilibrium results are provided on demand in the form of :
 * --save-approximation (optional)
 * --save-table (optional)
 * --save-fig-ne (optional)
-
-
+* --save-fig-e (optional)
+* --save-root-ne (optional)
+* --save-root-e (optional)
 
 #### TODO
 
