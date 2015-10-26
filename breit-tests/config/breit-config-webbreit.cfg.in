@@ -1,0 +1,22 @@
+#######################################
+
+#######################################
+# output options
+
+plot = false
+save = true
+save-equilibrium = true
+save-analytic = false
+save-approximation = false
+save-table = false
+
+save-fig-e = false
+save-fig-ne = false
+
+save-root-e = true
+save-root-ne = true
+
+output-directory = @CMAKE_SOURCE_DIR@/data/output
+
+
+

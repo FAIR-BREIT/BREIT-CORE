@@ -1,0 +1,20 @@
+#!/bin/bash
+
+opt=""
+
+if [ "$#" -gt 0 ]; then
+        opt=" $*"
+fi
+
+SOLVE_EQ="runSolveDynEqRoot$opt"
+SOLVE_EQ+=" --config @CMAKE_SOURCE_DIR@/data/config/breit-config-save-to-file.cfg"
+
+if [ -z "$BREIToutput" ]; then
+	echo "BREIToutput environment variable not set. Output directory is the default one."
+else
+	SOLVE_EQ+=" --output-directory $BREIToutput"
+fi  
+
+@CMAKE_BINARY_DIR@/bin/$SOLVE_EQ 
+
+

@@ -1,0 +1,5 @@
+#ifndef BREIT_VERSION
+#define BREIT_VERSION @BREIT_GIT_VERSION@
+#define BREIT_GIT_DATE "@BREIT_GIT_DATE@"
+#endif
+

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+opt=""
+
+if [ "$#" -gt 0 ]; then
+        opt=" $*"
+fi
+
+SOLVE_EQ="runSolveSteadyEq$opt"
+SOLVE_EQ+=" --config @CMAKE_SOURCE_DIR@/data/config/breit-config-steady.cfg"
+
+#SOLVE_EQ+=" --input-file @CMAKE_SOURCE_DIR@/data/input/Set_24_Bi+_Xe_4_mbar_step.txt"
+
+SOLVE_EQ+=" --verbose 1"
+@CMAKE_BINARY_DIR@/bin/$SOLVE_EQ

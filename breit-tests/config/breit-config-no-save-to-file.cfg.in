@@ -1,0 +1,11 @@
+#######################################
+
+#######################################
+# output options
+
+plot = true
+
+output-directory    =   @CMAKE_SOURCE_DIR@/data/output
+
+
+

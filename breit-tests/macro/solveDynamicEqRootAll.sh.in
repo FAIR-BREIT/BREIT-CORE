@@ -1,0 +1,22 @@
+#!/bin/bash
+
+opt=""
+
+if [ "$#" -gt 0 ]; then
+        opt=" $*"
+fi
+
+SOLVE_EQ="runSolveDynEqRoot$opt"
+
+SOLVE_EQ+=" --config @CMAKE_SOURCE_DIR@/data/config/breit-config-steady.cfg"
+
+SOLVE_EQ+=" --verbose 1"
+@CMAKE_BINARY_DIR@/bin/$SOLVE_EQ &
+
+
+SOLVE_EQ_RK="runSolveDynEqRootRK$opt"
+
+SOLVE_EQ_RK+=" --config @CMAKE_SOURCE_DIR@/data/config/breit-config-steady.cfg"
+
+SOLVE_EQ_RK+=" --verbose 1"
+@CMAKE_BINARY_DIR@/bin/$SOLVE_EQ_RK 
