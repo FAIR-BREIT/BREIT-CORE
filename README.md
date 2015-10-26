@@ -79,7 +79,7 @@ Third party libraries:
 
     cd ~/Breit_path_install
     git clone https://github.com/FAIR-BREIT/BREIT-CORE.git
-    cd BREIT
+    cd BREIT-CORE
     mkdir build
     cd build
     cmake ..
