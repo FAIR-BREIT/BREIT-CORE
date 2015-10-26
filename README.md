@@ -41,11 +41,9 @@ Output non-equilibrium results are provided on demand in the form of :
 #### TODO
 
 * distance-to-equilibrium computation
-* equilibrium solutions in pdf-figures
-* server and web interface
+* server 
 * numerical error from matrix operations + error propagation from input cross-sections
 * multiple input files for ion-optics
-* simplify local installation
 * implement XML and JSON input-file parser
 * refactor the alternative Runge-Kutta method
 * more documentations
