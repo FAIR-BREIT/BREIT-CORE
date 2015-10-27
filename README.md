@@ -2,7 +2,7 @@
 
 ## Introduction
 
-BREIT: Balance Equations for Atomic Reactions is an open source software written in C++, which solve analytically the equilibrium and non-equilibrium charge state distributions equations (c.f. [HANS-DIETER BETZ Rev. Mod. Phys. 44, 465](http://journals.aps.org/rmp/abstract/10.1103/RevModPhys.44.465)). 
+BREIT-CORE is the C++ source code, which aims to solve analytically the equilibrium and non-equilibrium charge state distributions equations (c.f. [HANS-DIETER BETZ Rev. Mod. Phys. 44, 465](http://journals.aps.org/rmp/abstract/10.1103/RevModPhys.44.465)). 
 #### Method
 The differential equations (non-equilibrium case) are solved using the eigenvalues decomposition method, and the asymptotic limits (equilibrium case) are solved by matrix inversion. In addition, a Runge-Kutta method can be used for cross-check.
 #### Input
