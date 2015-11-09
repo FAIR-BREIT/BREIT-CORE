@@ -138,10 +138,10 @@ namespace breit
             fOut_fig_e_filename=outputdir;
             fOut_fig_filename=outputdir;
 
-            fOut_fig_filename+="/Bear-results-figure-ne-";
+            fOut_fig_filename+="/Breit-results-figure-ne-";
             fOut_fig_filename+=filename;// pdf/root extension added later
 
-            fOut_fig_e_filename+="/Bear-results-figure-e-";
+            fOut_fig_e_filename+="/Breit-results-figure-e-";
             fOut_fig_e_filename+=filename;// pdf/root extension added later
 
             //output+=".root";

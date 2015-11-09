@@ -39,7 +39,7 @@ namespace breit
                                 fSep1("."), 
                                 fSep2(".") , 
                                 fSep3(""),
-                                fBear_eq_options("Bear equations program options"),
+                                fBear_eq_options("Breit equations program options"),
                                 fInput_desc("cross-sections description"),
                                 fInfile_cmd_desc("input file options"),
                                 fInfile_cfg_desc("input file options"),
@@ -128,7 +128,7 @@ namespace breit
             fs::path input=fvarmap["input-file"].template as<fs::path>();
             std::string filename=input.stem().string();
             std::string output=fvarmap["output-directory"].template as<fs::path>().string();
-            output+="/Bear-results-";
+            output+="/Breit-results-";
             output+=filename;
             output+=".txt";
             
