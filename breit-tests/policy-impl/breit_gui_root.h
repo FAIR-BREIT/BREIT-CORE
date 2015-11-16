@@ -24,7 +24,7 @@
 #include "TCanvas.h"
 #include "TAxis.h"
 #include "TLegend.h"
-
+#include "RVersion.h"
 
 #include "logger.h"
 #include "def.h"
@@ -269,8 +269,9 @@ namespace breit
                 if(tf1color==50)
                     tf1color=1;
 
+
                 fFunctions.at(p.first)->SetLineColor(tf1color);
-                #ifdef __CINT__
+                #if ROOT_VERSION_CODE < ROOT_VERSION(5,99,9)
                 fFunctions.at(p.first)->SetMaxima(fMaxop,fMaxpar,fMaxconst); // deprecated in root 6
                 #endif
                 fLegend->AddEntry(fFunctions[p.first].get(), name.c_str());
