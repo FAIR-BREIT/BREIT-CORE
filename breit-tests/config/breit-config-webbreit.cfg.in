@@ -15,6 +15,7 @@ save-fig-ne = false
 
 save-root-e = true
 save-root-ne = true
+save-distance-to-eq = true
 
 output-directory = @CMAKE_SOURCE_DIR@/data/output
 

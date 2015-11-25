@@ -41,7 +41,7 @@ int main(int argc, char** argv)
         if(man.parse(argc, argv,true))
             return 1;
         
-        bool plot = man.get_varMap()["plot"].as<bool>();
+        bool plot_fig = man.get_varMap()["plot"].as<bool>();
         bool save = man.get_varMap()["save"].as<bool>();
         bool save_fig_ne = man.get_varMap()["save-fig-ne"].as<bool>();
         bool save_fig_e = man.get_varMap()["save-fig-e"].as<bool>();
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
         /// /////////////////////////////////////////////////////
         // PLOT
         
-        if(plot)
+        if(plot_fig)
         {
             TApplication app("App", nullptr, 0);
             LOG(INFO)<<" ";
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
             if(save_fig_ne || save_fig_e || save_root_ne || save_root_e)
             {
                 
-                if(man.plot()) 
+                if(man.plot_fig()) 
                     return 1;
             }
         }

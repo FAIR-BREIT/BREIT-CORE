@@ -47,10 +47,11 @@ namespace breit
                             fInput(),
                             fFunctions(),
                             fFunctions_derivative(),
-                            fXmin(0.),  
-                            fXmax(20.),     
-                            fYmin(0.),  
+                            fXmin(0.),
+                            fXmax(20.),
+                            fYmin(0.),
                             fYmax(1.1),
+                            fEpsilon(0.001),
                             fTitle(),
                             fXTitle(),
                             fYTitle(),
@@ -91,6 +92,7 @@ namespace breit
             
             fYmin=vm.at("fraction.minimum").template as<double>();
             fYmax=vm.at("fraction.maximum").template as<double>();
+            fEpsilon=vm.at("fraction.epsilon").template as<double>();
             
             std::string proj_symbol=vm.at("projectile.symbol").template as<std::string>();
             std::string proj_energy=vm.at("projectile.energy").template as<std::string>();
@@ -152,6 +154,27 @@ namespace breit
 
             fSave_root_ne=vm2["save-root-ne"].template as<bool>();
             fSave_root_e=vm2["save-root-e"].template as<bool>();
+
+            // perform some checks
+            if(fXmin<=0.0)
+            {
+                fXmin=1.e-10;
+                LOG(WARN)   <<"Minimum thickness cannot be less or equal than zero because of the default log scale. The minimum thickness will be set to 1.e-10";
+            }
+
+            if(fEpsilon<=0.0)
+            {
+                fEpsilon=0.001;
+                LOG(WARN)   <<"Relative deviation epsilon=(F(x)-F(equilibrium))/F(equilibrium) cannot be less or equal than zero. Epsilon will be set to 0.001";
+            }
+
+            if(fEpsilon>0.3)
+            {
+                LOG(WARN)   <<"Relative deviation epsilon=(F(x)-F(equilibrium))/F(equilibrium) is greater than 0.3. "
+                            <<"Note that this value may be too large to perform a reliable estimate of the distance to equilibrium."
+                            <<"The computation will however continue with this value. Recommended values are of the order of 0.001";
+            }
+
             return 0;
         }
 
@@ -165,8 +188,6 @@ namespace breit
         
         int compute_equilibrium_distance()
         {
-            double epsilon=0.001;
-            double x=0;
             double N=(double)fNpoint;
             double step =(fXmax-fXmin)/N;
             for(int i(fNpoint-1);i>=0;i--)
@@ -178,13 +199,16 @@ namespace breit
                     double val=p.second->Eval(x);
                     double val_eq=fSummary->equilibrium_solutions.at(p.first);
                     double rel_dev=(val_eq-val)/val_eq;
-                    if(std::fabs(rel_dev)>epsilon)
+                    if(std::fabs(rel_dev)>fEpsilon)
                         if(!fSummary->distance_to_equilibrium.count(p.first))
                         {
 
+                            //if(fNpoint-1==i)
+                            //    LOG(RESULTS)<<"Estimated distance to equilibrium found at range limit. Increase range or increase relative deviation limit.";
                             if(fNpoint-1==i)
-                                LOG(WARN)<<"Distance to equilibrium located at the end of the defined range. Increase range";
-                            fSummary->distance_to_equilibrium[p.first]=x;
+                                fSummary->distance_to_equilibrium[p.first]=-1.0;
+                            else
+                                fSummary->distance_to_equilibrium[p.first]=x;
                         }
                 }
             }
@@ -301,7 +325,7 @@ namespace breit
         }
         
         // plot and draw functions
-        int plot()
+        int plot_fig()
         {
             if(fMethod==kDiagonalization)
                 return draw(fFunctions);
@@ -520,6 +544,7 @@ namespace breit
         double fXmax;
         double fYmin;
         double fYmax;
+        double fEpsilon;
         std::string fTitle;
         std::string fXTitle;
         std::string fYTitle;

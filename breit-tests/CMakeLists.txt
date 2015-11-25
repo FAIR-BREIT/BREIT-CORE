@@ -21,12 +21,14 @@ EXEC_PROGRAM(/bin/chmod ARGS "u+x  ${CMAKE_BINARY_DIR}/bin/breit-web.sh")
 set(INCLUDE_DIRECTORIES
 ${CMAKE_SOURCE_DIR}/breit-utils/src
 ${CMAKE_SOURCE_DIR}/breit-equations/src
-${CMAKE_SOURCE_DIR}/breit-matrix-operations
-${CMAKE_SOURCE_DIR}/breit-matrix-operations/src
 ${CMAKE_SOURCE_DIR}/breit-tests/policy-impl
 )
 
-Set(SYSTEM_INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIRS})
+Set(SYSTEM_INCLUDE_DIRECTORIES 
+  ${Boost_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/breit-matrix-operations
+  ${CMAKE_SOURCE_DIR}/breit-matrix-operations/src
+  )
 
 if(LAPACK_FOUND)
   set(INCLUDE_DIRECTORIES 
@@ -42,7 +44,7 @@ if(LAPACK_FOUND)
 endif(LAPACK_FOUND)
 
 include_directories(${INCLUDE_DIRECTORIES})
-include_directories(${SYSTEM_INCLUDE_DIRECTORIES})
+include_directories(SYSTEM ${SYSTEM_INCLUDE_DIRECTORIES})
 
 set(LINK_DIRECTORIES ${Boost_LIBRARY_DIRS})
 set(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR} ${LINK_DIRECTORIES}) 

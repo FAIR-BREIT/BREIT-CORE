@@ -23,10 +23,11 @@ namespace breit
         virtual ~no_gui(){}
         
         template <typename... Args> int init(Args&... args){return 0;}
-        template <typename... Args> int plot(Args&... args){return 0;}
+        template <typename... Args> int plot_fig(Args&... args){return 0;}
         template <typename... Args> int init_summary(Args&... args) {return 0;}
         template <typename... Args> int print_table(Args&... args){return 0;}
         template <typename... Args> int save_fig(Args&... args){return 0;}
+        template <typename... Args> int compute_equilibrium_distance(){return 0;}
     };
     
     
@@ -223,8 +224,34 @@ namespace breit
                 }
             }
             
-            
-            
+
+
+            bool print_distance=eq_type::fvarmap["save-distance-to-eq"].template as<bool>();
+            if(print_distance)
+            {
+                gui_type::compute_equilibrium_distance();
+                LOG(RESULTS)<<"##################################";
+                LOG(RESULTS)<<"#estimated distance to equilibrium :";
+                for(const auto& p : fSummary->distance_to_equilibrium)
+                {
+                    if(p.second > 0.0)
+                        LOG(RESULTS)<< "X(F"
+                                    << std::to_string(fSummary->F_index_map.at(p.first))
+                                    << ") = "
+                                    << p.second 
+                                    << " "
+                                    << X_unit;
+                    else
+                        LOG(RESULTS)<< "X(F"
+                                    << std::to_string(fSummary->F_index_map.at(p.first))
+                                    << ") = "
+                                    << Xmax
+                                    << " "
+                                    << X_unit
+                                    << " (warning : estimation found at range limit."
+                                    << " Increase thickness range or relative deviation epsilon if less than 0.001)";
+                }
+            }
             
             if(save_table)
             {
@@ -260,7 +287,7 @@ namespace breit
         
         int plot()
         {
-            gui_type::plot();
+            gui_type::plot_fig();
             bool save_figure = false;//eq_type::fvarmap["save-fig-ne"].template as<bool>();
             
             

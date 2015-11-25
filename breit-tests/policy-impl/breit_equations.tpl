@@ -134,7 +134,7 @@ namespace breit
         if(ui_type::parse_cfgFile(file_to_parse.string(),input_file_desc,vm,false))
             return 1;
 
-         double scale_factor=ui_type::scale_factor(vm);
+         double scale_factor=ui_type::get_scale_factor(vm);
         
         // get vm data into the fCoef_list container 
         fCoef_list.clear();

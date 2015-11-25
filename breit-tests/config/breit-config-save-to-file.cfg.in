@@ -12,6 +12,7 @@ save-table = true
 
 save-fig-e = true
 save-fig-ne = true
+save-distance-to-eq = true
 
 output-directory = @CMAKE_SOURCE_DIR@/data/output
 

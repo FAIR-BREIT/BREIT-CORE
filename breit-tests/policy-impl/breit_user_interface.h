@@ -205,7 +205,7 @@ namespace breit
                 ("save-fig-ne",         po::value<bool>()->zero_tokens()->default_value(false),                   "save non-equilibrium figure to pdf file")
                 ("save-root-e",         po::value<bool>()->zero_tokens()->default_value(false),                   "save equilibrium figure to root file")
                 ("save-root-ne",        po::value<bool>()->zero_tokens()->default_value(false),                   "save non-equilibrium figure to root file")
-                
+                ("save-distance-to-eq", po::value<bool>()->zero_tokens()->default_value(false),            "save distance to equilibrium in txt file")
                 //("save-fig-ne-root", po::value<bool>()->zero_tokens()->default_value(false),                   "print analytic solution to file")
             
             ;
@@ -278,12 +278,13 @@ namespace breit
                 ("target.mass.number",          po::value<double>()->default_value(0.),                                     "Mass number A of the target")
                 ("target.pressure",             po::value<std::string>()->default_value("unknown target mass unmber"),      "Mass number A of the target")
                 ("cross.section.unit",          po::value<std::string>()->default_value("unknown cross-section unit"),      "Units symbol of cross-sections (e.g. cm2, mm2...)")
-                ("thickness.unit",              po::value<std::string>()->default_value("unknown thickness unit"),          "Units of the thickness (e.g. mg/cm2)")
+                ("thickness.unit",              po::value<std::string>()->default_value("unknown thickness unit"),          "Units of the thickness (e.g. mg/cm2, mug/cm2)")
                 ("thickness.maximum",           po::value<double>()->default_value(20.),                                    "Maximal thickness")
-                ("thickness.minimum",           po::value<double>()->default_value(1.e-3),                                     "Minimum thickness")
+                ("thickness.minimum",           po::value<double>()->default_value(1.e-3),                                  "Minimum thickness")
                 ("thickness.point.number",      po::value<std::size_t>()->default_value(1000),                              "Maximal thickness")
                 ("fraction.maximum",            po::value<double>()->default_value(1.1),                                    "Maximal fraction range (for plot)")
-                ("fraction.minimum",            po::value<double>()->default_value(1.e-3),                                     "Minimum fraction range (for plot)")
+                ("fraction.minimum",            po::value<double>()->default_value(1.e-3),                                  "Minimum fraction range (for plot)")
+                ("fraction.epsilon",            po::value<double>()->default_value(0.001),                                  "Relative deviation (F(x)-F(equilibrium))/F(equilibrium) to reach to estimate the distance to equilibrium")
                 
                     ;
             return 0;
@@ -350,7 +351,7 @@ namespace breit
         }
         
         
-        double scale_factor(const variables_map& vm)
+        double get_scale_factor(const variables_map& vm)
         {
             // copy var map and get proper header info to form the saling factor
             fVarmap_input_file=vm;

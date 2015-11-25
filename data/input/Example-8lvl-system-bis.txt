@@ -15,11 +15,13 @@ pressure    = 0 mbar
 [thickness]
 unit        = cg/cm2
 maximum     = 30
+minimum     = 1e-4
 point.number = 200
 
 #############################################
 [fraction]
 maximum     = 1.
+epsilon     = 0.001
 
 #############################################
 [cross.section]
