@@ -38,10 +38,10 @@ Output non-equilibrium results are provided on demand in the form of :
 * --save-fig-e (optional)
 * --save-root-ne (optional)
 * --save-root-e (optional)
+* --save-distance-to-eq (optional)
 
 #### TODO
 
-* distance-to-equilibrium computation
 * server 
 * numerical error from matrix operations + error propagation from input cross-sections
 * multiple input files for ion-optics
