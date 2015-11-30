@@ -3,15 +3,15 @@
 set(SCRIPT_CMD1 "\${filename##*.}")
 set(SCRIPT_CMD2 "\${filename%.*}")
 
-configure_file( ${CMAKE_SOURCE_DIR}/breit-tests/macro/breit-eq.sh.in ${CMAKE_BINARY_DIR}/bin/breit-eq.sh )
-configure_file( ${CMAKE_SOURCE_DIR}/breit-tests/macro/breit-plot.sh.in ${CMAKE_BINARY_DIR}/bin/breit-plot.sh )
-configure_file( ${CMAKE_SOURCE_DIR}/breit-tests/macro/breit-web.sh.in ${CMAKE_BINARY_DIR}/bin/breit-web.sh )
+configure_file( ${CMAKE_SOURCE_DIR}/breit-exec/macro/breit-eq.sh.in ${CMAKE_BINARY_DIR}/bin/breit-eq.sh )
+configure_file( ${CMAKE_SOURCE_DIR}/breit-exec/macro/breit-plot.sh.in ${CMAKE_BINARY_DIR}/bin/breit-plot.sh )
+configure_file( ${CMAKE_SOURCE_DIR}/breit-exec/macro/breit-web.sh.in ${CMAKE_BINARY_DIR}/bin/breit-web.sh )
 
-configure_file( ${CMAKE_SOURCE_DIR}/breit-tests/config/breit-config-save-to-file.cfg.in ${CMAKE_SOURCE_DIR}/data/config/breit-config-save-to-file.cfg )
+configure_file( ${CMAKE_SOURCE_DIR}/breit-exec/config/breit-config-save-to-file.cfg.in ${CMAKE_SOURCE_DIR}/data/config/breit-config-save-to-file.cfg )
 
-configure_file( ${CMAKE_SOURCE_DIR}/breit-tests/config/breit-config-no-save-to-file.cfg.in ${CMAKE_SOURCE_DIR}/data/config/breit-config-no-save-to-file.cfg )
+configure_file( ${CMAKE_SOURCE_DIR}/breit-exec/config/breit-config-no-save-to-file.cfg.in ${CMAKE_SOURCE_DIR}/data/config/breit-config-no-save-to-file.cfg )
 
-configure_file( ${CMAKE_SOURCE_DIR}/breit-tests/config/breit-config-webbreit.cfg.in ${CMAKE_SOURCE_DIR}/data/config/breit-config-webbreit.cfg )
+configure_file( ${CMAKE_SOURCE_DIR}/breit-exec/config/breit-config-webbreit.cfg.in ${CMAKE_SOURCE_DIR}/data/config/breit-config-webbreit.cfg )
 
 EXEC_PROGRAM(/bin/chmod ARGS "u+x  ${CMAKE_BINARY_DIR}/bin/breit-eq.sh")
 EXEC_PROGRAM(/bin/chmod ARGS "u+x  ${CMAKE_BINARY_DIR}/bin/breit-plot.sh")
@@ -21,7 +21,7 @@ EXEC_PROGRAM(/bin/chmod ARGS "u+x  ${CMAKE_BINARY_DIR}/bin/breit-web.sh")
 set(INCLUDE_DIRECTORIES
 ${CMAKE_SOURCE_DIR}/breit-utils/src
 ${CMAKE_SOURCE_DIR}/breit-equations/src
-${CMAKE_SOURCE_DIR}/breit-tests/policy-impl
+${CMAKE_SOURCE_DIR}/breit-exec/policy-impl
 )
 
 Set(SYSTEM_INCLUDE_DIRECTORIES 
@@ -75,9 +75,9 @@ if(LAPACK_FOUND)
 
       #link_directories(${LINK_DIRECTORIES})
 
-      Set(SRCS ${CMAKE_SOURCE_DIR}/breit-tests/policy-impl/handle_root_signal.cxx)
+      Set(SRCS ${CMAKE_SOURCE_DIR}/breit-exec/policy-impl/handle_root_signal.cxx)
 
-      Set(LINKDEF ${CMAKE_SOURCE_DIR}/breit-tests/policy-impl/sig_handlerLinkDef.h)
+      Set(LINKDEF ${CMAKE_SOURCE_DIR}/breit-exec/policy-impl/sig_handlerLinkDef.h)
       Set(LIBRARY_NAME handle_root_signal)
 
       if (ROOT_FOUND_VERSION LESS 59999)

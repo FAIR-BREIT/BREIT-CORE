@@ -168,7 +168,7 @@ Set(SYSTEM_INCLUDE_DIRECTORIES
 
 If (Boost_FOUND)
     add_subdirectory(breit-utils)
-    add_subdirectory(breit-tests)
+    add_subdirectory(breit-exec)
 endif(Boost_FOUND)
 
 WRITE_CONFIG_FILE(config.sh)
