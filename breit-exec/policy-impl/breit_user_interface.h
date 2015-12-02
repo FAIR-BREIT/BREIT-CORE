@@ -275,8 +275,8 @@ namespace breit
                 ("projectile.symbol",           po::value<std::string>()->default_value("unknown projectile"),              "Symbol of projectile (e.g. U for Uranium...)")
                 ("projectile.energy",           po::value<std::string>()->default_value("unknown energy"),                  "Energy of the projectile")
                 ("target.symbol",               po::value<std::string>()->default_value("unknown target"),                  "Symbol of the target (e.g. C for carbon...)")
-                ("target.mass.number",          po::value<double>()->default_value(0.),                                     "Mass number A of the target")
-                ("target.pressure",             po::value<std::string>()->default_value("unknown target mass unmber"),      "Mass number A of the target")
+                ("target.mass.number",          po::value<double>()->required(),                                     "Mass number A of the target")
+                ("target.pressure",             po::value<std::string>()->default_value("unknown target pressure"),         "Target pressure")
                 ("cross.section.unit",          po::value<std::string>()->default_value("unknown cross-section unit"),      "Units symbol of cross-sections (e.g. cm2, mm2...)")
                 ("thickness.unit",              po::value<std::string>()->default_value("unknown thickness unit"),          "Units of the thickness (e.g. mg/cm2, mug/cm2)")
                 ("thickness.maximum",           po::value<double>()->default_value(20.),                                    "Maximal thickness")
@@ -360,6 +360,13 @@ namespace breit
             double atomic_mass = fVarmap_input_file.at("target.mass.number").as<double>();
             std::string x_unit = fVarmap_input_file.at("thickness.unit").as<std::string>();
             std::string coef_unit = fVarmap_input_file.at("cross.section.unit").as<std::string>();
+
+            if(atomic_mass<=0.0)
+            {
+                std::stringstream errMsg;
+                errMsg <<"provided value for key mass.number is "<< atomic_mass <<" and must be positive. Program will now exit";
+                throw std::runtime_error(errMsg.str().c_str());
+            }
 
             if(!thickness_scale.count(x_unit))
             {
