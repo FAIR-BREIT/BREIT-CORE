@@ -431,20 +431,25 @@ namespace breit
                 double charge_start;
                 double charge_end;
                 double mean=0.;
-                double sum=0.;
                 double variance=0.;
+                // compute mean
+                for(const auto& p : fSummary->equilibrium_solutions)
+                {
+                    double Fi=p.second;
+                    double qi=fSummary->F_index_map.at(p.first);
+
+                    fCharge[i]=qi;
+                    fFraction[i]=Fi;
+                    mean+=qi*Fi;
+                    i++;
+                }
+                // compute variance
                 for(const auto& p : fSummary->equilibrium_solutions)
                 {
                     double Fi=p.second;
                     double qi=fSummary->F_index_map.at(p.first);
                     double temp=(qi-mean);
                     variance+=temp*temp*Fi;
-
-                    fCharge[i]=qi;
-                    fFraction[i]=Fi;
-                    mean+=qi*Fi;
-                    i++;
-                    sum+=Fi;
                 }
 
 
