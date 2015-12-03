@@ -38,11 +38,9 @@ BOOST_LOG_GLOBAL_LOGGER_INIT(global_logger, src::severity_logger_mt)
 }
 
 
-void init_log_console()
+void init_log_console(bool color_format)
 {
     
-    bool color_format=true;// todo move it to parameter
-
     typedef sinks::synchronous_sink<sinks::text_ostream_backend> text_sink;
     boost::shared_ptr<text_sink> sink = boost::make_shared<text_sink>();
     // add "console" output stream to our sink
@@ -54,7 +52,7 @@ void init_log_console()
     else
         sink->set_formatter(&init_log_formatter<tag_file>);
     
-    sink->set_filter(severity != SEVERITY_ERROR);
+    sink->set_filter(severity != SEVERITY_ERROR && severity < SEVERITY_NOLOG);
     // add sink to the core
     logging::core::get()->add_sink(sink);
     
@@ -66,7 +64,7 @@ void init_log_console()
     if(color_format)
         sink_error->set_formatter(&init_log_formatter<tag_console>);
     else
-        sink_error->set_formatter(&init_log_formatter<tag_file>);
+        sink_error->set_formatter(&init_log_error_formatter);
     
     sink_error->set_filter(severity == SEVERITY_ERROR);
     logging::core::get()->add_sink(sink_error);
@@ -74,7 +72,14 @@ void init_log_console()
 }
 
 
-void init_log_console(custom_severity_level threshold, log_op::operation op)
+void reinit_logger(bool color_format)
+{
+    LOG(NOLOG)<<"";
+    logging::core::get()->remove_all_sinks();
+    init_log_console(color_format);
+}
+
+void init_log_console(custom_severity_level threshold, log_op::operation op, bool color_format)
 {
     // add a text sink
     //typedef sinks::synchronous_sink<sinks::text_ostream_backend> text_sink;
@@ -82,31 +87,35 @@ void init_log_console(custom_severity_level threshold, log_op::operation op)
     logging::core::get()->remove_all_sinks();
     boost::shared_ptr<text_sink> sink = boost::make_shared<text_sink>();
     // add "console" output stream to our sink
-    sink->locked_backend()->add_stream(boost::shared_ptr<std::ostream>(&std::clog, boost::null_deleter()));
+    sink->locked_backend()->add_stream(boost::shared_ptr<std::ostream>(&std::cout, boost::null_deleter()));
     // specify the format of the log message 
-    sink->set_formatter(&init_log_formatter<tag_console>);
+
+    if(color_format)
+        sink->set_formatter(&init_log_formatter<tag_console>);
+    else
+        sink->set_formatter(&init_log_formatter<tag_file>);
     // add sink to the core
     
     switch (op)
     {
         case log_op::operation::EQUAL :
-            sink->set_filter(severity == threshold);
+            sink->set_filter(severity == threshold && severity != SEVERITY_ERROR && severity < SEVERITY_NOLOG);
             break;
             
         case log_op::operation::GREATER_THAN :
-            sink->set_filter(severity > threshold);
+            sink->set_filter(severity > threshold && severity != SEVERITY_ERROR && severity < SEVERITY_NOLOG);
             break;
             
         case log_op::operation::GREATER_EQ_THAN :
-            sink->set_filter(severity >= threshold);
+            sink->set_filter(severity >= threshold && severity != SEVERITY_ERROR && severity < SEVERITY_NOLOG);
             break;
             
         case log_op::operation::LESS_THAN :
-            sink->set_filter(severity < threshold);
+            sink->set_filter(severity < threshold && severity != SEVERITY_ERROR && severity < SEVERITY_NOLOG);
             break;
             
         case log_op::operation::LESS_EQ_THAN :
-            sink->set_filter(severity <= threshold);
+            sink->set_filter(severity <= threshold && severity != SEVERITY_ERROR && severity < SEVERITY_NOLOG);
             break;
         
         default:
@@ -115,6 +124,21 @@ void init_log_console(custom_severity_level threshold, log_op::operation op)
     
     
     logging::core::get()->add_sink(sink);
+
+
+    // CONSOLE - only severity error
+    boost::shared_ptr<text_sink> sink_error = boost::make_shared<text_sink>();
+    sink_error->locked_backend()->add_stream(boost::shared_ptr<std::ostream>(&std::cerr, boost::null_deleter()));
+    
+    if(color_format)
+        sink_error->set_formatter(&init_log_formatter<tag_console>);
+    else
+        sink_error->set_formatter(&init_log_error_formatter);
+    
+    sink_error->set_filter(severity == SEVERITY_ERROR);
+    logging::core::get()->add_sink(sink_error);
+
+
 }
 
 void init_log_file(const std::string& filename, custom_severity_level threshold, log_op::operation op, const std::string& id)

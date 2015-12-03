@@ -132,14 +132,14 @@ namespace breit
             output+=filename;
             output+=".txt";
             
-            
+            bool log_color=fvarmap.at("log-color").template as<bool>();
             if(fSeverity_map.count(verbose))
             {
-                init_log_console(fSeverity_map.at(verbose),log_op::operation::GREATER_EQ_THAN);
+                init_log_console(fSeverity_map.at(verbose),log_op::operation::GREATER_EQ_THAN,log_color);
             }
             else
             {
-                init_log_console(fSeverity_map.at("INFO"),log_op::operation::GREATER_EQ_THAN);
+                init_log_console(fSeverity_map.at("INFO"),log_op::operation::GREATER_EQ_THAN,log_color);
                 LOG(WARN)<<"unrecognized verbosity options. It will be set to INFO";
             }
             

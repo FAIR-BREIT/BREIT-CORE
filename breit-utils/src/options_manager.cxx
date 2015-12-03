@@ -44,6 +44,7 @@ namespace breit
                                                                         "  4=STATE \n"
                                                                         "  5=NOLOG"
                 )
+            ("log-color", po::value<bool>()->default_value(true), "logger color format : true or false")
             ;
 
     }

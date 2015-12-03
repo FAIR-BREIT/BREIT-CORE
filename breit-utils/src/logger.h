@@ -84,8 +84,9 @@ namespace log_op
 
 
 // declaration of the init function for the global logger
-void init_log_console();
-void init_log_console(custom_severity_level threshold=SEVERITY_THRESHOLD, log_op::operation op=log_op::GREATER_EQ_THAN);
+void init_log_console(bool color_format=true);
+void reinit_logger(bool color_format);
+void init_log_console(custom_severity_level threshold=SEVERITY_THRESHOLD, log_op::operation op=log_op::GREATER_EQ_THAN,bool color_format=true);
 void init_log_file( const std::string& filename, 
                     custom_severity_level threshold=SEVERITY_THRESHOLD, 
                     log_op::operation=log_op::GREATER_EQ_THAN,
@@ -106,6 +107,11 @@ BOOST_LOG_GLOBAL_LOGGER(global_logger, boost::log::sources::severity_logger_mt<c
 BOOST_LOG_ATTRIBUTE_KEYWORD(breit_logger_timestamp, "TimeStamp", boost::posix_time::ptime)
 BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", custom_severity_level)        
 
+
+inline void init_log_error_formatter(const boost::log::record_view &view, boost::log::formatting_ostream &os)
+{
+    os << view.attribute_values()["Message"].extract<std::string>();
+}
 
 template<typename T>
 void init_log_formatter(const boost::log::record_view &view, boost::log::formatting_ostream &os)
