@@ -488,9 +488,9 @@ namespace breit
         // solve equation - case : A non-diagonalizable -> triangularizable in C for sure
         int solve_A_triangularizable_in_C(const vector_d& initial_condition)
         {
-            LOG(INFO)<<"Matrix cannot be diagonalized neither in R nor C.";
-            LOG(INFO)<<"A triangularization in C will be performed.";
-            LOG(INFO)<<"Triangularization method not implemented yet.";
+            LOG(ERROR)<<"Matrix cannot be diagonalized neither in R nor C.";
+            //LOG(INFO)<<"A triangularization in C will be performed.";
+            //LOG(INFO)<<"Triangularization method not implemented yet.";
             return 1;
         }
         
