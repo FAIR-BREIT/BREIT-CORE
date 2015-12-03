@@ -259,7 +259,7 @@ namespace breit
         if(fCoef_range_i!=fCoef_range_j)
         {
             LOG(ERROR)<<"i and j range index are different and should be the same.";
-            LOG(ERROR)<<"check the given cross-section coefficients in file "<<filename.string();
+            LOG(ERROR)<<"check the given cross-section coefficients in the input file";//<<filename.string();
             return 1;
         }
         /*else
