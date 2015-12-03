@@ -128,10 +128,14 @@ namespace breit
             fs::path input=fvarmap["input-file"].template as<fs::path>();
             std::string filename=input.stem().string();
             std::string output=fvarmap["output-directory"].template as<fs::path>().string();
+
+            std::string error_file=output+"/breit_log_error.txt";
             output+="/Breit-results-";
             output+=filename;
             output+=".txt";
             
+
+
             bool log_color=fvarmap.at("log-color").template as<bool>();
             if(fSeverity_map.count(verbose))
             {
@@ -142,6 +146,8 @@ namespace breit
                 init_log_console(fSeverity_map.at("INFO"),log_op::operation::GREATER_EQ_THAN,log_color);
                 LOG(WARN)<<"unrecognized verbosity options. It will be set to INFO";
             }
+
+            init_error_file(error_file);
             
             INIT_LOG_FILE_FILTER("breit.log",GREATER_EQ_THAN,DEBUG);
             

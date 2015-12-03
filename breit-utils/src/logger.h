@@ -107,7 +107,7 @@ BOOST_LOG_GLOBAL_LOGGER(global_logger, boost::log::sources::severity_logger_mt<c
 BOOST_LOG_ATTRIBUTE_KEYWORD(breit_logger_timestamp, "TimeStamp", boost::posix_time::ptime)
 BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", custom_severity_level)        
 
-
+void init_error_file(const std::string& filename);
 inline void init_log_error_formatter(const boost::log::record_view &view, boost::log::formatting_ostream &os)
 {
     os << view.attribute_values()["Message"].extract<std::string>();

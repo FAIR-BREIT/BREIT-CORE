@@ -203,7 +203,19 @@ void init_log_file(const std::string& filename, custom_severity_level threshold,
     logging::core::get()->add_sink(sink);
 }
 
+void init_error_file(const std::string& filename)
+{
+    
+    typedef sinks::synchronous_sink<sinks::text_ostream_backend> text_sink;
+    boost::shared_ptr<text_sink> sink = boost::make_shared<text_sink>();
+    sink->locked_backend()->add_stream(boost::make_shared<std::ofstream>(filename));
 
+    //sink->set_formatter(&init_log_error_formatter);
+    
+    sink->set_filter(severity == SEVERITY_ERROR);
+
+    logging::core::get()->add_sink(sink);
+}
 
 void init_new_file(const std::string& filename, custom_severity_level threshold, log_op::operation op)
 {
