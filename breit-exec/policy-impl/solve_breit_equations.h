@@ -31,6 +31,8 @@
 
 namespace breit
 {
+    // function to remove the complex conjugate eigenvalues from map and store them into the comp_ev_container argument.
+    // handle case where a complex eigenvalue and its conjugate do not have subsequent index.
     void remove_conjugates_from_map(std::map<size_t, std::complex<double> >& map, 
                                     std::vector<std::tuple<size_t,size_t,std::complex<double> > >& comp_ev_container)
     {
@@ -474,6 +476,8 @@ namespace breit
             solution_type::init(fEigen_mat);
             LOG(DEBUG)<<"solution_type::form_homogeneous_solution";
             solution_type::form_homogeneous_solution(fEigen_mat,unknown_coef,ev_map,complex_conjugates);
+            //solution_type::form_homogeneous_solution_raw(fEigen_mat,unknown_coef,ev_map,complex_conjugates);
+            
             LOG(DEBUG)<<"solution_type::form_general_solution";
             solution_type::form_general_solution(fEquilibrium_solution);
             

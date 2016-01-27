@@ -36,11 +36,15 @@ namespace breit
         std::shared_ptr<breit_summary> fSummary;
     protected:
         std::map<std::size_t, std::string> fGeneral_solution;
+        std::map<std::string, double> fLast_fraction; // helper to reduce the last fraction expression
         double fUnit_convertor=1.;
+        std::map< std::string, std::map<std::string, double> > fLast_fraction_complex; // for each key = exp(lambda) the value is a map with key coswx and sinwx with the corresponding coefficient as value
         
     public:
         breit_analytic_solution() :  fPRECISON(1.e-15),
                                     fGeneral_solution(),
+                                    fLast_fraction(),
+                                    fLast_fraction_complex(),
                                     fUnit_convertor(1.)
         {}
         virtual ~breit_analytic_solution(){}
@@ -64,11 +68,12 @@ namespace breit
         }
         int form_general_solution(const vector_d& particular_solution )
         {
-            
+            double particular_part=0;
             for(auto& p : fGeneral_solution)
             {
                 p.second+="+";
                 p.second+=to_string_scientific(particular_solution(p.first));
+                particular_part+=particular_solution(p.first);
             }
             
             
@@ -88,13 +93,51 @@ namespace breit
             if(last_key!=0 && !fGeneral_solution.count(last_key))
             {
                 std::string F_last("1. - (");
-                for(const auto& p : fGeneral_solution)
+
+                // real part
+                int counter=0;
+                for(const auto& p : fLast_fraction)
                 {
-                    if(p.first != first_key)
-                    F_last+=" + ";
-                    F_last+=p.second;
+                    std::string temp=to_string_scientific(p.second);
                     
+                    if(counter!=0)
+                        F_last+="+";
+                    F_last+="("+temp+")";
+                    F_last+="*"+p.first;
+
+                    counter++;
                 }
+
+                // complex part
+                
+
+                for(const auto& p : fLast_fraction_complex)
+                {
+                    if(fLast_fraction_complex.size()>0)
+                    {
+                        if(counter!=0)
+                            F_last+="+";
+                        F_last+=p.first; // exp(lambdax)
+                        F_last+="*(";
+                        for(const auto& q : p.second)
+                        {
+                            std::string coef_sum=to_string_scientific(q.second);
+                            F_last+="("+ coef_sum +")*";
+                            F_last+=q.first;
+                            if(q.first!=p.second.rbegin()->first)
+                                F_last+="+";
+
+                        }
+                        F_last+=")";
+                    }
+
+                }
+
+                // particular part
+                if(particular_part!=0)
+                    F_last+="+" + to_string_scientific(particular_part);
+
+
                     F_last+=")";
                 fGeneral_solution[last_key]=F_last;
             }
@@ -107,8 +150,9 @@ namespace breit
             
             return 0;
         }
-        
-        
+
+
+
         int form_homogeneous_solution(  const matrix_c& eigen_mat, 
                                         const vector_d& unknown_coef, 
                                         eigen_value_map& eig_val_map, 
@@ -122,8 +166,13 @@ namespace breit
             // with ev_k(i) = ai cos(omega_k x) - bi sin(omega_k x) 
             
             // and ev_k'(i) bar = ai sin(omega_k' x) + bi cos(omega_k' x)
+
             for(const auto& p : eig_val_c)
             {
+                // loop over the complex eigenvalues. Each element of eig_val_c contains :
+                // - a complex eigenvalue, 
+                // - the corresponding index in the diagonal matrix, 
+                // - and the index of its complex conjugate
                 size_t index=0;
                 size_t index_bar=0;
                 std::complex<double> eigenvalue;
@@ -136,7 +185,7 @@ namespace breit
                 std::string coswx;
                 std::string sinwx;
                 
-                // to simplify string solution handle case where lambda and omega = +/- 1
+                // to simplify string solution : handle case where lambda and omega = +/- 1
                 if(std::fabs(lambda-1.)<fPRECISON)
                 {
                     expLambdaX="exp(x)";
@@ -146,7 +195,7 @@ namespace breit
                     if(std::fabs(lambda+1.)<fPRECISON)
                         expLambdaX="exp(-x)";
                     else
-                        expLambdaX="exp(" + to_string_scientific(lambda)+"*x)";
+                        expLambdaX="exp(" + to_string_scientific(lambda) + "*x)";
                 }
                 
                 if(std::fabs(omega-1.)<fPRECISON)
@@ -168,6 +217,7 @@ namespace breit
                     }
                 }
                 
+                // loop over element of the eigen vector matrix 
                 for(size_t row(0); row<eigen_mat.size1(); row++)
                 {
                     // ///////////////////////////////
@@ -189,85 +239,124 @@ namespace breit
                     std::string C1;
                     std::string C2;
                     
+                    //convert coefficient to string
                     std::string C1xai=to_string_scientific(C1xai_val);
                     std::string C1xbi=to_string_scientific(C1xbi_val);
                     std::string C2xai=to_string_scientific(C2xai_val);
                     std::string C2xbi=to_string_scientific(C2xbi_val);
-                    
-                    
-                    
-                   
+
                     ai=to_string_scientific(ai_val);
                     bi=to_string_scientific(bi_val);
                     
                     C1=to_string_scientific(C1_val);
                     C2=to_string_scientific(C2_val);
                     
-                    // 
-                    if(std::fabs(C1_val)>fPRECISON)                                                     //                  [if C1!=0]
+                    // if the product of C1 x ai AND C1 x bi are near zero (less than fPRECISION) do not print
+                    if(std::fabs(C1xai_val)>fPRECISON || std::fabs(C1xbi_val)>fPRECISON)
                     {
+                        // add +                [if string not empty] 
                         if(!fGeneral_solution[row].empty())                             
-                            fGeneral_solution[row]+="+";                                    // +                [if string not empty]
+                            fGeneral_solution[row]+="+";                                    
 
-                        //fGeneral_solution[row]+="(";                                        // (                [if C1!=0]
-                        //fGeneral_solution[row]+=C1;                                         // C1               [if C1!=0]
-                        //fGeneral_solution[row]+=")";                                        // )                [if C1!=0]
-                        //fGeneral_solution[row]+="*";                                        // *                [if C1!=0]
-                        
+                        // if lambda=0 do not print "exp(lambda*x)*"
                         if(std::fabs(lambda)>fPRECISON)
                             fGeneral_solution[row]+= expLambdaX + "*";                      // exp(lambda x) *  [if C1!=0] [if lambda!=0]
+
                         // component of first eigenvector
                         fGeneral_solution[row]+="(";                                        // (
-                        if(std::fabs(ai_val)>fPRECISON)
-                            fGeneral_solution[row]+="(" + C1xai + ")";                         // (ai)             [if C1!=0] [if ai!=0]
-                        if(std::fabs(omega)>fPRECISON)
+                        if(std::fabs(C1xai_val)>fPRECISON)
                         {
-                            if(std::fabs(ai_val)>fPRECISON)
+                            fGeneral_solution[row]+="(" + C1xai + ")";                      // (ai)             [if C1!=0] [if ai!=0]
+                            if(std::fabs(omega)>fPRECISON)
                                 fGeneral_solution[row]+="*"+coswx;                          // * cos(omega x)   [if C1!=0] [if omega!=0] [if ai!=0]
-                            if(std::fabs(bi_val)>fPRECISON)
-                            {
-                                fGeneral_solution[row]+="-1.*";                                // -                [if C1!=0] [if omega!=0] [if bi!=0]
-                                fGeneral_solution[row]+="(" + C1xbi + ")";                     // (bi)             [if C1!=0] [if omega!=0] [if bi!=0]
+                        }
+                        
+                        if(std::fabs(omega)>fPRECISON && std::fabs(C1xbi_val)>fPRECISON)
+                        {
+                                fGeneral_solution[row]+="-1.*";                             // -                [if C1!=0] [if omega!=0] [if bi!=0]
+                                fGeneral_solution[row]+="(" + C1xbi + ")";                  // (bi)             [if C1!=0] [if omega!=0] [if bi!=0]
                                 fGeneral_solution[row]+="*"+sinwx;                          // * sin(omega x)   [if C1!=0] [if omega!=0] [if bi!=0]
-                            }
                         }
                         fGeneral_solution[row]+=")";                                        // )
                     }
+
                     // ///////////////////////////////
                     // contribution from eigenvector' complex conjugate :
                     // coef of first eigenvector
                     
-                    if(std::fabs(C2_val)>fPRECISON)                                                     //                  [if C2!=0]
+                    if(std::fabs(C2xai_val)>fPRECISON || std::fabs(C2xbi_val)>fPRECISON)
                     {
+                        // add +                [if string not empty]
                         if(!fGeneral_solution[row].empty()) 
-                            fGeneral_solution[row]+="+";                                    // +                [if string not empty]
-
-                        //fGeneral_solution[row]+="(";                                        // (                [if C2!=0]
-                        //fGeneral_solution[row]+=C2;                                         // C2               [if C2!=0]
-                        //fGeneral_solution[row]+=")";                                        // )                [if C2!=0]
-                        //fGeneral_solution[row]+="*";                                        // *                [if C2!=0]
+                            fGeneral_solution[row]+="+";                                    
                         
+                        // if lambda=0 do not print "exp(lambda*x)*"
                         if(std::fabs(lambda)>fPRECISON)
                             fGeneral_solution[row]+= expLambdaX + "*";                      // exp(lambda x) *  [if C2!=0] [if lambda!=0]
+
+
                         // component of first eigenvector
                         fGeneral_solution[row]+="(";                                        // (
-                        if(std::fabs(bi_val)>fPRECISON)
-                            fGeneral_solution[row]+="(" + C2xbi + ")";                         // (bi)             [if C2!=0] [if bi!=0]
-                        if(std::fabs(omega)>fPRECISON)
+                        if(std::fabs(C2xbi_val)>fPRECISON)
                         {
-                            if(std::fabs(bi_val)>fPRECISON)
-                                fGeneral_solution[row]+="*"+coswx;                          // * cos(omega x)   [if C2!=0] [if omega!=0] [if bi!=0]
-                            if(std::fabs(ai_val)>fPRECISON)
-                            {
-                                fGeneral_solution[row]+="+1.*";                                // -                [if C2!=0] [if omega!=0] [if ai!=0]
-                                fGeneral_solution[row]+="(" + C2xai + ")";                     // (ai)             [if C2!=0] [if omega!=0] [if ai!=0]
-                                fGeneral_solution[row]+="*"+sinwx;                          // * sin(omega x)   [if C2!=0] [if omega!=0] [if ai!=0]
-                            }
+                            fGeneral_solution[row]+="(" + C2xbi + ")";                      // (bi)             [if C2!=0] [if bi!=0]
+                            if(std::fabs(omega)>fPRECISON)
+                                fGeneral_solution[row]+="*"+coswx;
+                        }
+
+                        if(std::fabs(omega)>fPRECISON && std::fabs(C2xai_val)>fPRECISON)
+                        {
+                                fGeneral_solution[row]+="+1.*";                             // -                [if C2!=0] [if omega!=0] [if ai!=0]
+                                fGeneral_solution[row]+="(" + C2xai + ")";                  // (ai)             [if C2!=0] [if omega!=0] [if ai!=0]
+                                fGeneral_solution[row]+="*" + sinwx;                        // * sin(omega x)   [if C2!=0] [if omega!=0] [if ai!=0]
                         }
                         fGeneral_solution[row]+=")";                                        // )
                     }
-                    
-                    
+
+                    // deal complex part of last fraction 
+
+                    if(std::fabs(lambda)<fPRECISON)
+                        expLambdaX="1.";
+
+                    if(fLast_fraction_complex.count(expLambdaX))
+                    {
+                        if(std::fabs(omega)>fPRECISON)
+                        {
+                            if(fLast_fraction_complex.at(expLambdaX).count(coswx))
+                                fLast_fraction_complex.at(expLambdaX).at(coswx)+=C1xai_val+C2xbi_val;
+                            else
+                                fLast_fraction_complex.at(expLambdaX)[coswx]=C1xai_val+C2xbi_val;
+
+                            if(fLast_fraction_complex.at(expLambdaX).count(sinwx))
+                                fLast_fraction_complex.at(expLambdaX).at(sinwx)+=C2xai_val-C1xbi_val;
+                            else
+                                fLast_fraction_complex.at(expLambdaX)[sinwx]=C2xai_val-C1xbi_val;
+                        }
+                        else
+                        {
+                            if(fLast_fraction_complex.at(expLambdaX).count(coswx))
+                                fLast_fraction_complex.at(expLambdaX).at(coswx)+=C1xai_val+C2xbi_val;
+                            else
+                                fLast_fraction_complex.at(expLambdaX)[coswx]=C1xai_val+C2xbi_val;
+                        }
+                    }
+                    else
+                    {
+                        if(std::fabs(omega)>fPRECISON)
+                        {
+                            fLast_fraction_complex[expLambdaX][coswx]=C1xai_val+C2xbi_val;
+                            fLast_fraction_complex[expLambdaX][sinwx]=C2xai_val-C1xbi_val;
+                        }
+                        else
+                        {
+                            fLast_fraction_complex[expLambdaX][coswx]=C1xai_val+C2xbi_val;
+                        }
+                    }
+
+
+
+
+
                 }
             }
             
@@ -307,35 +396,39 @@ namespace breit
                     C1=to_string_scientific(C1_val);
                     C1ai=to_string_scientific(C1ai_val);
                     
-                    if(std::fabs(C1_val)>fPRECISON && std::fabs(ai_val)>fPRECISON)
+                    //if(std::fabs(C1_val)>fPRECISON && std::fabs(ai_val)>fPRECISON)
+                    if(std::fabs(C1ai_val)>fPRECISON)
                     {
                         if(!fGeneral_solution[row].empty())
                             fGeneral_solution[row]+="+";
 
                         
-                        fGeneral_solution[row]+="(" + C1ai +")";                                             // C1
+                        fGeneral_solution[row]+="(" + C1ai +")";                                  // C1
                         //fGeneral_solution[row]+="* ";                                           // * 
                         if(std::fabs(lambda)>fPRECISON)
-                            fGeneral_solution[row]+= "*" + expLambdaX;                          // exp(lambda x) *   [if lambda!=0]
+                            fGeneral_solution[row]+= "*" + expLambdaX;                            // exp(lambda x) *   [if lambda!=0]
                         //fGeneral_solution[row]+=ai;                                             // ai
+
+                        // helper code to factorize the expression with same exp. Reduce significantly the real part of last fraction expression
+                        if(fLast_fraction.count(expLambdaX))
+                            fLast_fraction[expLambdaX]+=C1ai_val;
+                        else
+                            fLast_fraction[expLambdaX]=C1ai_val;
+
                     }
                 }
             }
             
             
-            /*for(const auto& p : fGeneral_solution)
-            {
-                LOG(INFO)<<"F"<< p.first+1 <<"(x) = "<< p.second;
-            }*/
-            
             
             return 0;
         }
         
+        
     
         
         
-        
+        // for debuging
         int form_homogeneous_solution_raw(  const matrix_c& eigen_mat, 
                                         const vector_d& unknown_coef, 
                                         eigen_value_map& eig_val_map, 
