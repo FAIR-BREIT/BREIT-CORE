@@ -441,7 +441,7 @@ namespace breit
                 }
                 
             }
-            if(sum_init_cond!=1.)
+            if(fabs(sum_init_cond-1.)>=5.e-16)
             {
                 LOG(ERROR)<<"Provided initial conditions is not normalized : sum = "<< sum_init_cond << " different from 1.";
                 LOG(ERROR)<<"Correct initial conditions are required to compute the non-equilibrium chage state distributions.";
