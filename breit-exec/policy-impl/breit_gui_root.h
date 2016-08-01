@@ -47,6 +47,7 @@ namespace breit
                             fInput(),
                             fFunctions(),
                             fFunctions_derivative(),
+                            fXOffset(0.0),
                             fXmin(0.),
                             fXmax(20.),
                             fYmin(0.),
@@ -233,14 +234,16 @@ namespace breit
 
             os_title<<std::setw(16)
                     //<<std::left
-                    <<bstream_centered("Sum");
+                    <<bstream_centered("q-mean(x)");
             LOG(RESULTS)<<os_title.str();
             double N=(double)fNpoint;
             double step =(fXmax-fXmin)/N;
-            double sum=0;
+            double sum=0.0;
+            double mean=0.0;
             for(int i(0);i<fNpoint;i++)
             {
-                sum=0;
+                sum=0.0;
+                mean=0.0;
                 std::ostringstream os_eval;
                 double idoub = (double)i;
                 double x=idoub*step+fXmin;
@@ -248,19 +251,21 @@ namespace breit
                         //<<std::left
                         //<< std::setprecision(10) 
                         << std::scientific
-                        <<bstream_centered(to_string_scientific(x))<<"    ";
+                        << bstream_centered(to_string_scientific(x))<<"    ";
                 for(auto& p : fFunctions)
                 {
-                    
+                    double qi=fSummary->F_index_map.at(p.first);
+                    double Fi=p.second->Eval(x);
                     os_eval << std::setw(16)
                             //<<std::left
                             //<< std::setprecision(12) 
                             << bstream_centered(to_string_scientific(p.second->Eval(x))) << "    ";
-                    sum+=p.second->Eval(x);
+                    //sum+=p.second->Eval(x);
+                    mean+=qi*Fi;
                 }
                 os_eval << std::setw(16)
                         //<< std::left 
-                        << bstream_centered(to_string_scientific(sum));
+                        << bstream_centered(to_string_scientific(mean));
                 LOG(RESULTS)<<os_eval.str();
             }
             return 0;
@@ -545,6 +550,7 @@ namespace breit
         //std::map<std::size_t, TF1*> fFunctions;
         std::map<std::size_t, std::shared_ptr<TF1> > fFunctions;
         std::map<std::size_t, std::shared_ptr<TF1> > fFunctions_derivative;
+        double fXOffset;
         double fXmin;
         double fXmax;
         double fYmin;
