@@ -538,6 +538,11 @@ namespace breit
             return 0;
         }
         
+
+
+
+
+        double GetXmin(){return fXmin;}
     private:
         std::shared_ptr<TCanvas> fCanvas_non_equilib;
         std::shared_ptr<TCanvas> fCanvas_equilib;

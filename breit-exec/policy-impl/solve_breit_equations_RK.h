@@ -121,6 +121,12 @@ namespace breit
             fSummary = summary;
             return 0;
         }
+
+        int translate_solutions(double translation)
+        {
+            // implement me ...
+            return 0;
+        }
         // main function 
         int solve(const matrix_d& mat, const vector_d& vec, const vector_d& initial_condition)
         {

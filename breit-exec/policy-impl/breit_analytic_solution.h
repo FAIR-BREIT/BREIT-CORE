@@ -12,7 +12,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/lu.hpp>
 #include <boost/numeric/ublas/io.hpp>
-
+#include <boost/algorithm/string.hpp>
 #include "def.h"
 
 namespace breit
@@ -148,6 +148,31 @@ namespace breit
             
             
             
+            return 0;
+        }
+
+
+        int translate_solutions(double translation)
+        {
+
+            if(translation<=0.0)
+                return 1;
+            else
+            {
+                std::string new_var = "(x-" + to_string_scientific(translation) +")";
+                // change of variable x --> x-xmin
+                for(auto& p : fGeneral_solution)
+                {
+                    std::string targetFormula = p.second;
+                    boost::replace_all(targetFormula, "(x", std::string("("+new_var).c_str());//order matter!!
+                    boost::replace_all(targetFormula, "*x", std::string("*"+new_var).c_str());
+
+                    p.second = targetFormula;
+                }
+                // Copy translated final solution
+                fSummary->analytical_solutions=fGeneral_solution;
+            }
+
             return 0;
         }
 

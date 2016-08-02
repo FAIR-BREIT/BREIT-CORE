@@ -13,6 +13,9 @@
 #include <memory>
 #include "def.h"
 #include "logger.h"
+
+#include <boost/algorithm/string.hpp>
+
 namespace breit
 {
 
@@ -28,6 +31,7 @@ namespace breit
         template <typename... Args> int print_table(Args&... args){return 0;}
         template <typename... Args> int save_fig(Args&... args){return 0;}
         template <typename... Args> int compute_equilibrium_distance(){return 0;}
+        template <typename... Args> int GetXmin(){return 0;}
     };
     
     
@@ -85,9 +89,12 @@ namespace breit
             
             //needed for printing table
             gui_type::init(eq_type::fVarmap_input_file,eq_type::fvarmap);
+            double translation = gui_type::GetXmin();
+            solve_eq_type::translate_solutions(translation);
             gui_type::init(solve_eq_type::fGeneral_solution);
             
-            
+
+
             return 0;
         }
         

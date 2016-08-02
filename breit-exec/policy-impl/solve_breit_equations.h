@@ -108,6 +108,7 @@ namespace breit
           using solution_type::fGeneral_solution;
           using solution_type::fUnit_convertor;
           
+          
         public:
         
         solve_breit_equations() : solution_type(),
