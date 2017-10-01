@@ -256,10 +256,12 @@ namespace breit
                 {
                     double qi=fSummary->F_index_map.at(p.first);
                     double Fi=p.second->Eval(x);
+                    if(Fi < 0)
+                        Fi = 0;
                     os_eval << std::setw(16)
                             //<<std::left
                             //<< std::setprecision(12) 
-                            << bstream_centered(to_string_scientific(p.second->Eval(x))) << "    ";
+                            << bstream_centered(to_string_scientific(Fi)) << "    ";
                     //sum+=p.second->Eval(x);
                     mean+=qi*Fi;
                 }

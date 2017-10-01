@@ -442,9 +442,10 @@ namespace breit
                 }
                 
             }
-            if(fabs(sum_init_cond-1.)>=1.e-8)
+            float threshold = 0.01;
+            if(fabs(sum_init_cond-1.) >= threshold)
             {
-                LOG(ERROR)<<"Provided initial conditions is not normalized : |1-sum Fi(0)| = "<< fabs(sum_init_cond-1.) << " >= 1.e-8";
+                LOG(ERROR)<<"Provided initial conditions is not normalized : |1-sum Fi(0)| = "<< fabs(sum_init_cond-1.) << " >= " threshold;
                 LOG(ERROR)<<"Correct initial conditions are required to compute the non-equilibrium chage state distributions.";
                 return 1;
             }
