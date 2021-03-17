@@ -116,7 +116,12 @@ namespace breit
             data_type val=data_type();
             LOG(MAXDEBUG)<<"fCoef_index_min="<<fCoef_index_min;
             LOG(MAXDEBUG)<<"fEqDim="<<fEqDim;
-            for(size_t j(fCoef_index_min);j<=i-1;j++)
+            size_t maxrange = 0;
+            if (i > 0) {
+                maxrange = i-1;
+            }
+
+            for(size_t j(fCoef_index_min);j<=maxrange;j++)
             {
                 LOG(MAXDEBUG)<<"i="<<i <<" j="<<j<<"  q="<<q;
                 val+=fCoef_list.at(coef(j,i))*Fpq(j,q);
@@ -138,10 +143,18 @@ namespace breit
         {
             typedef std::pair<size_t,size_t> coef;
             data_type val=data_type();
-            for(size_t m(i+1);m<=fCoef_index_min+fEqDim-1;m++)
+            for(size_t m(i+1);m<=fCoef_index_min+fEqDim-1;m++) {
                 val+=fCoef_list.at(coef(i,m))*Fpq(i,q);
-            for(size_t k(fCoef_index_min);k<=i-1;k++)
+            }
+
+            size_t maxrange = 0;
+            if (i > 0) {
+                maxrange = i-1;
+            }
+
+            for(size_t k(fCoef_index_min);k<=maxrange;k++) {
                 val+=fCoef_list.at(coef(i,k))*Fpq(i,q);
+            }
             return val;
         }
         data_type compute_matrix_element(size_t p, size_t q)
